@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pila LIFO</title>
+    <style>
+        /* Estilo global */
+        body { 
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif, sans-serif; 
+            margin: 20px; 
+            background-color: #0a0a00; /* Cambia este valor para ajustar el color de fondo */
+        }
+        .container { max-width: 500px; margin: auto; text-align: center; }
+        .status, #cima { display: none; } /* Ocultado por defecto */
+        button {
+            margin: 5px; 
+            padding: 15px 30px; 
+            font-size: 18px; 
+            border: none; 
+            border-radius: 25px; 
+            color: #fff; 
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-insertar { background-color: #00296f; }
+        .btn-insertar:hover { background-color: #2042ab; }
+
+        .btn-eliminar { background-color: #720a14; }
+        .btn-eliminar:hover { background-color: #bd3643; }
+
+        .btn-mostrar { background-color: #564100; color: #000; }
+        .btn-mostrar:hover { background-color: #e5ac00; }
+
+        .btn-regresar { background-color: #275600; }
+        .btn-regresar:hover { background-color: #88eb41; }
+
+        input { padding: 10px; font-size: 16px; margin: 10px; border-radius: 10px; border: 1px solid #ccc; }
+        h1 { color: #fff7f7; }
+        #status { 
+            margin-top: 20px; 
+            padding: 10px; 
+            border: 1px solid #00a4a7; 
+            font-size: 18px; 
+            display: none; 
+            color: rgb(251, 251, 251); /* Cambia este valor para ajustar el color del texto del estado */
+        }
+        #cima { 
+            margin-top: 10px; 
+            font-size: 20px; 
+            font-weight: bold; 
+            color: #e4e4e4; 
+        }
+        .nombre {
+            color: rgb(240, 240, 240); /* Cambia este valor para ajustar el color de los nombres */
+        }
+
+        .item {
+            display: inline-block;
+            padding: 10px;
+            margin: 5px;
+            background-color: #00b5c9;
+            border-radius: 5px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .item.enter {
+            transform: translateY(-20px);
+            animation: enter 0.5s forwards;
+        }
+
+        .item.exit {
+            transform: translateY(20px);
+            animation: exit 0.5s forwards;
+        }
+
+        @keyframes enter {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes exit {
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(20px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pila LIFO</h1>
+        <!-- Campo de entrada para el valor -->
+        <input type="number" id="valor" placeholder="Ingrese un valor (1-99)">
+        <!-- Botones de operación -->
+        <button class="btn-insertar" onclick="push()">Insertar</button>
+        <button class="btn-eliminar" onclick="pop()">Eliminar</button>
+        <button class="btn-mostrar" onclick="toggleStatus()">Mostrar</button>
+        <button class="btn-regresar" onclick="location.href='index.html'">Regresar</button>
+        <!-- División para mostrar el estado de la pila -->
+        <div class="status" id="status">Estado de la pila: []</div>
+        <!-- División para mostrar la cima de la pila -->
+        <div id="cima">Cima de la pila: []</div>
+        <p class="nombre">Creado por Kevyn Reyes</p> <!-- Añade la clase nombre para cambiar el color -->
+    </div>
+
+    <script>
+        class Pila {
+            constructor(maxSize = 6) {
+                this.items = [];
+                this.maxSize = maxSize;
+            }
+
+            // Método para insertar un elemento en la pila
+            push(item) {
+                if (this.isFull()) {
+                    return "¡Overflow! La pila está llena.";
+                }
+                this.items.push(item);
+                return "Elemento añadido.";
+            }
+
+            // Método para eliminar un elemento de la pila
+            pop() {
+                if (this.isEmpty()) {
+                    return "¡Underflow! La pila está vacía.";
+                }
+                return this.items.pop();
+            }
+
+            // Verificar si la pila está vacía
+            isEmpty() {
+                return this.items.length === 0;
+            }
+
+            // Verificar si la pila está llena
+            isFull() {
+                return this.items.length === this.maxSize;
+            }
+
+            // Mostrar el estado actual de la pila
+            show() {
+                return this.items;
+            }
+
+            // Obtener el elemento en la cima de la pila
+            cima() {
+                return this.items.length > 0 ? this.items[this.items.length - 1] : "[]";
+            }
+        }
+
+        const pila = new Pila();
+
+        // Función para insertar un elemento en la pila
+        function push() {
+            const valor = parseInt(document.getElementById('valor').value);
+            if (valor >= 1 && valor <= 99) {
+                alert(pila.push(valor));
+                updateCima();
+            } else {
+                alert("El valor debe ser un número entero entre 1 y 99.");
+            }
+        }
+
+        // Función para eliminar un elemento de la pila
+        function pop() {
+            alert(pila.pop());
+            updateCima();
+        }
+
+        // Función para mostrar/ocultar el estado de la pila y la cima
+        function toggleStatus() {
+            const statusDiv = document.getElementById('status');
+            const cimaDiv = document.getElementById('cima');
+            if (statusDiv.style.display === 'none') {
+                statusDiv.style.display = 'block';
+                cimaDiv.style.display = 'block';
+                updateStatus();
+                updateCima();
+            } else {
+                statusDiv.style.display = 'none';
+                cimaDiv.style.display = 'none';
+            }
+        }
+
+        // Función para actualizar el estado de la pila
+        function updateStatus() {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = 'Estado de la pila: ';
+
+            pila.show().forEach((item) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'item enter';
+                itemDiv.innerText = item;
+                statusDiv.appendChild(itemDiv);
+            });
+        }
+
+        // Función para actualizar la cima de la pila
+        function updateCima() {
+            const cimaDiv = document.getElementById('cima');
+            cimaDiv.innerHTML = 'CIMA: ' + pila.cima();
+        }
+    </script>
+</body>
+</html>
